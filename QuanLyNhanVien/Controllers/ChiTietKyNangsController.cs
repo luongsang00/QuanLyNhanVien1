@@ -179,9 +179,45 @@ namespace QuanLyNhanVien.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+
         private bool ChiTietKyNangExists(int id)
         {
           return _context.ChiTietKyNangs.Any(e => e.IdNhanVien == id);
+        }
+        private void AddNewEmp(NhanVien nhanVien)
+        {
+            //Keyword transaction
+            // Model taoj moi nhan vien: thong tin nhan vien, skill
+            try
+            {
+                // Add new NV
+                var nv = new NhanVien();
+                _context.Add(nv);
+                _context.SaveChanges();
+
+                var idnv = nv.Id;
+
+
+                // Add Skill
+                List<KyNang> kyNangs = new List<KyNang>();
+
+                foreach (var item in kyNangs)
+                {
+                    //var skill = new ChiTietKyNang()
+                    //{
+                    //    // idnv  = idnv
+                    //}
+                }
+                // Cach viet dung lambar ex
+                //kyNangs.ForEach(item => {
+                //    _context.Add(nv);
+                //    _context.SaveChanges();
+                //});
+            }
+            catch(Exception ex)
+            {
+
+            }
         }
     }
 }

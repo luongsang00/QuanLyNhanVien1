@@ -42,6 +42,7 @@ namespace QuanLyNhanVien.Controllers
         }
         public class DanhSachKyNang
         {
+            public int Id { get; set; }
             public string TenKyNang { get; set; }
         }
         // GET: NhanViens/Details/5
@@ -75,6 +76,7 @@ namespace QuanLyNhanVien.Controllers
                      where N.Id == id
                      select new DanhSachKyNang
                      {
+                         Id = K.IdKyNang,
                          TenKyNang = K.TenLoaiKn,
                      }).ToListAsync();
 
@@ -198,6 +200,7 @@ namespace QuanLyNhanVien.Controllers
                                             where N.Id == id
                                             select new DanhSachKyNang
                                             {
+                                                Id = K.IdKyNang,
                                                 TenKyNang = K.TenLoaiKn,
                                             }).ToListAsync();
 
