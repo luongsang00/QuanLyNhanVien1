@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using QuanLyNhanVien.Models;
+using X.PagedList;
 
 namespace QuanLyNhanVien.Controllers
 {
@@ -17,29 +18,67 @@ namespace QuanLyNhanVien.Controllers
         {
             _context = context;
         }
-        
-        // GET: NhanViens
-        public async Task<IActionResult> Index()
-        {
-            
-            List<ChiTietNhanVien> nhanVien = await (from Nv in _context.NhanViens
-                                        join LNv in _context.LoaiNhanViens on Nv.IdLoaiNv equals LNv.IdLoaiNv
-                                        //join CtKn in _context.ChiTietKyNangs on Nv.Id equals CtKn.IdNhanVien
-                                        //join Kn in _context.KyNangs on CtKn.IdKyNang equals Kn.IdKyNang
 
-                                        select new ChiTietNhanVien
-                                        {
-                                            Id = Nv.Id,
-                                            Ten = Nv.Ten,
-                                            ChucVu = LNv.TenLoaiNv,
-                                            SoDienThoai = Nv.SoDienThoai,
-                                            //Skill = Kn.TenLoaiKn,
-                                            DiaChi = Nv.DiaChi
-                                        }).ToListAsync();
+        // GET: NhanViens
+        //public async Task<IActionResult> Index(int? page)
+        //{
+        //    if (page == null) page = 1;
+        //    List<ChiTietNhanVien> nhanVien = await (from Nv in _context.NhanViens
+        //                                join LNv in _context.LoaiNhanViens on Nv.IdLoaiNv equals LNv.IdLoaiNv
+        //                                //join CtKn in _context.ChiTietKyNangs on Nv.Id equals CtKn.IdNhanVien
+        //                                //join Kn in _context.KyNangs on CtKn.IdKyNang equals Kn.IdKyNang
+
+        //                                select new ChiTietNhanVien
+        //                                {
+        //                                    Id = Nv.Id,
+        //                                    Ten = Nv.Ten,
+        //                                    ChucVu = LNv.TenLoaiNv,
+        //                                    SoDienThoai = Nv.SoDienThoai,
+        //                                    //Skill = Kn.TenLoaiKn,
+        //                                    DiaChi = Nv.DiaChi
+        //                                }).ToListAsync();
+
+        //    return View(await _context.NhanViens.ToListAsync());
+        //    int pageSize = 3;
+        //    int pageNumber = (page ?? 1);
+        //    return View(nhanVien.ToPagedList(pageNumber,pageSize));
+        //}
+        public async Task<IActionResult> Index(string sortOrder, int ? page, string search)
+        {
+            ViewBag.Ten = String.IsNullOrEmpty(sortOrder) ? "Ten" : "";
+            if (page == null) page = 1;
+            
+
+            List<ChiTietNhanVien> nhanVien = await (from Nv in _context.NhanViens
+                                                    join LNv in _context.LoaiNhanViens on Nv.IdLoaiNv equals LNv.IdLoaiNv
+                                                    //join CtKn in _context.ChiTietKyNangs on Nv.Id equals CtKn.IdNhanVien
+                                                    //join Kn in _context.KyNangs on CtKn.IdKyNang equals Kn.IdKyNang
+
+                                                    select new ChiTietNhanVien
+                                                    {
+                                                        Id = Nv.Id,
+                                                        Ten = Nv.Ten,
+                                                        ChucVu = LNv.TenLoaiNv,
+                                                        SoDienThoai = Nv.SoDienThoai,
+                                                        //Skill = Kn.TenLoaiKn,
+                                                        DiaChi = Nv.DiaChi
+                                                    }).ToListAsync();
+            nhanVien = nhanVien.OrderBy(x => x.Ten).ToList();
+            if (!string.IsNullOrEmpty(search))
+            {
+                nhanVien =nhanVien.Where(x=>x.Ten.Contains(search) ||x.ChucVu.Contains(search) || x.DiaChi.Contains(search) || x.SoDienThoai.Contains(search)).ToList();
                 
-            //return View(await _context.NhanViens.ToListAsync());
-            return View(nhanVien);
+            }    
+            int pageSize = 3;
+            int pageNumber = (page ?? 1);
+
+            //Sắp xếp theo tên
+            
+
+
+            return View(nhanVien.ToPagedList(pageNumber,pageSize));
         }
+
         public class DanhSachKyNang
         {
             public int Id { get; set; }
