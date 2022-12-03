@@ -44,16 +44,19 @@
            <table>
                <tr>Ten</tr>
                <tbody>
-@foreach (var item in Model.Skill) {
+    @foreach (var item in Model.Skill) {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.TenKyNang)
             </td>
             
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                @*<a asp-area="" asp-controller="ChiTietKyNangs"  asp-action="Edit">Edit</a>
+                <a asp-area="" asp-controller="ChiTietKyNangs"  asp-action="Details">Edit</a>
+                <a asp-area="" asp-controller="ChiTietKyNangs"  asp-action="Delete">Edit</a>*@
+                @*<a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>*@
             </td>
         </tr>
 }

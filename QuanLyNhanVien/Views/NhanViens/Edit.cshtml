@@ -1,4 +1,5 @@
 ﻿@model QuanLyNhanVien.Models.NhanVien
+@*@model QuanLyNhanVien.Models.ChiTietNhanVien*@
 
 @{
     ViewData["Title"] = "Edit";
@@ -33,6 +34,13 @@
                 @*<input asp-for="IdLoaiNv" class="form-control" />*@
                 <select asp-for="IdLoaiNv" asp-items="@ViewBag.LoaiNvlist" class="form-control">
                     <option>Chọn Chức vụ</option>
+                </select>
+                <span asp-validation-for="IdLoaiNv" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label id="IdKyNang" name="IdKyNang" class="control-label"></label>
+                <select id="IdKyNang" name="IdKyNang" asp-items="@ViewBag.LoaiKnlist" class="form-control" multiple>
+                    <option>Chọn Ky Nang</option>
                 </select>
                 <span asp-validation-for="IdLoaiNv" class="text-danger"></span>
             </div>

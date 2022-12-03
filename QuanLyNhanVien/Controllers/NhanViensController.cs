@@ -108,9 +108,14 @@ namespace QuanLyNhanVien.Controllers
         // GET: NhanViens/Create
         public IActionResult Create()
         {
+            //lấy danh sách chức vụ nhân viên
             List<LoaiNhanVien> dep = _context.LoaiNhanViens.ToList();
             SelectList ListChucVu = new SelectList(dep, "IdLoaiNv", "TenLoaiNv");
             ViewBag.LoaiNvlist = ListChucVu;
+            //Lấy danh sách kỹ năng
+            List<KyNang> Kn = _context.KyNangs.ToList();
+            SelectList ListKyNang = new SelectList(Kn, "IdKyNang", "TenLoaiKn");
+            ViewBag.LoaiKnlist = ListKyNang;
             return View();
         }
 
@@ -119,11 +124,23 @@ namespace QuanLyNhanVien.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Ten,DiaChi,SoDienThoai,IdLoaiNv")] NhanVien nhanVien)
+        
+        public async Task<IActionResult> Create([Bind("Id,Ten,DiaChi,SoDienThoai,IdLoaiNv")] NhanVien nhanVien, List<int> IdKyNang)
         {
             if (ModelState.IsValid)
-            {
-                _context.Add(nhanVien);
+            {     
+                _context.NhanViens.Add(nhanVien);
+                await _context.SaveChangesAsync();
+                var id = nhanVien.Id;
+                //var idn = a.Id;
+                foreach (var item in IdKyNang)
+                {
+                    
+                    _context.ChiTietKyNangs.Add(new ChiTietKyNang { 
+                        IdKyNang = item, 
+                        IdNhanVien = id
+                    });
+                }
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -131,17 +148,26 @@ namespace QuanLyNhanVien.Controllers
         }
 
         // GET: NhanViens/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int? id, ChiTietKyNang chiTietKyNang)
 
         {
+            //tạo list chức vụ
             List<LoaiNhanVien> dep = _context.LoaiNhanViens.ToList();
             SelectList ListChucVu = new SelectList(dep, "IdLoaiNv", "TenLoaiNv");
             ViewBag.LoaiNvlist = ListChucVu;
+            //tạo list kỹ năng
+            List<KyNang> kn = _context.KyNangs.ToList();
+            SelectList ListKyNang = new SelectList(kn, "IdKyNang", "TenLoaiKn");
+            ViewBag.LoaiKnlist = ListKyNang;
+
+
 
             if (id == null || _context.NhanViens == null)
             {
                 return NotFound();
             }
+
+
 
             var nhanVien = await _context.NhanViens.FindAsync(id);
             if (nhanVien == null)
@@ -156,9 +182,9 @@ namespace QuanLyNhanVien.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Ten,DiaChi,SoDienThoai,IdLoaiNv")] NhanVien nhanVien)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Ten,DiaChi,SoDienThoai,IdLoaiNv")] NhanVien nhanVien, List<int> IdKyNang)
         {
-            if (id != nhanVien.Id)
+            if (id != nhanVien.Id )
             {
                 return NotFound();
             }
@@ -168,6 +194,22 @@ namespace QuanLyNhanVien.Controllers
                 try
                 {
                     _context.Update(nhanVien);
+
+                    foreach (var item in IdKyNang)
+                    {
+
+                        _context.ChiTietKyNangs.Add(new ChiTietKyNang
+                        {
+                            IdKyNang = item,
+                            IdNhanVien = id
+                        });
+                    }
+                    //foreach (var item in IdKyNang)
+                    //{
+
+                    //    _context.ChiTietKyNangs.Update( IdKyNang);
+                    //}
+
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)

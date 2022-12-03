@@ -199,7 +199,7 @@ namespace QuanLyNhanVien.Controllers
 
 
                 // Add Skill
-                List<KyNang> kyNangs = new List<KyNang>();
+                List<ChiTietKyNang> kyNangs = new List<ChiTietKyNang>();
 
                 foreach (var item in kyNangs)
                 {
@@ -218,6 +218,55 @@ namespace QuanLyNhanVien.Controllers
             {
 
             }
+
+
+
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("Id,Ten,DiaChi,SoDienThoai,IdLoaiNv")] NhanVien nhanVien)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Add(nhanVien);
+                await _context.SaveChangesAsync();
+                var a = _context.NhanViens.Where(x => x.Ten == nhanVien.Ten).FirstOrDefault();
+                var idn = a.Id;
+                //var idnv = nhanVien.Id;
+                ////await _context.SaveChangesAsync();
+
+                //// Add Skill
+                //List<KyNang> kyNangs = new List<KyNang>();
+
+                //foreach (var item in kyNangs)
+                //{
+                //    var skill = new ChiTietKyNang()
+                //    {
+                //        IdNhanVien = idn,
+                //        IdKyNang = item.IdKyNang,
+                //    };
+                //    _context.Add(skill);
+                //    await _context.SaveChangesAsync();
+
+                //    //    //{
+                //    //    //    // idnv  = idnv
+                //    //    //}
+                //}
+                async Task<IActionResult> Create([Bind("IdNhanVien,IdKyNang")] ChiTietKyNang chiTietKyNang)
+                {
+                    if (ModelState.IsValid)
+                    {
+                        chiTietKyNang.IdNhanVien= idn;
+                        _context.Add(chiTietKyNang);
+                        await _context.SaveChangesAsync();
+                        return RedirectToAction(nameof(Index));
+                    }
+                    return View(chiTietKyNang);
+                }
+
+                return RedirectToAction(nameof(Index));
+            }
+            return View(nhanVien);
         }
     }
 }
